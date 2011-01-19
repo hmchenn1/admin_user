@@ -1,5 +1,13 @@
-# == Schema Information
-# Schema version: <timestamp>
+#version 9b chen
+
+# Reference:
+# (1) Ruby on Rails 3 tutorials (author: Michael Hartl)
+# (2) Agile web development 3rd edition and 4th edition
+
+
+
+#   Schema Information
+# 
 #
 # Table name: users
 #
@@ -8,6 +16,7 @@
 #  email      :string(255)
 #  encrypted_password :string
 #  salt  :string
+#  admin :boolean
 #  created_at :datetime
 #  updated_at :datetime
 #
@@ -39,8 +48,12 @@ class User < ActiveRecord::Base
         user = find_by_email(email)
         return nil  if user.nil?
         return user if user.has_password?(submitted_password)
-      end
+    end
     
+    def self.authenticate_with_salt(id, cookie_salt)
+          user = find_by_id(id)
+          (user && user.salt == cookie_salt) ? user : nil
+    end
   private
   
   def encrypt_password
